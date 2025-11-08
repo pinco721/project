@@ -1,39 +1,52 @@
+/* ---------- БАЗОВЫЕ НАСТРОЙКИ ---------- */
+* {
+  box-sizing: border-box;
+}
+
 body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  background: #f7f7f7;
+  background: #f5f7fa;
   color: #222;
   display: flex;
   justify-content: center;
   padding: 20px;
+  margin: 0;
 }
 
+/* ---------- ОСНОВНОЙ КОНТЕЙНЕР ---------- */
 .container {
   width: 100%;
-  max-width: 800px;
+  max-width: 850px;
   background: #fff;
   padding: 25px;
   border-radius: 10px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
 }
 
+/* ---------- ЗАГОЛОВОК ---------- */
 h1 {
   text-align: center;
-  font-size: 1.3rem;
+  font-size: 1.35rem;
+  font-weight: 600;
   margin-bottom: 25px;
+  color: #111;
 }
 
+/* ---------- ВОПРОС ---------- */
 .question {
-  margin-bottom: 22px;
+  margin-bottom: 25px;
   padding-bottom: 10px;
   border-bottom: 1px solid #eee;
 }
 
 .question p {
   font-weight: 600;
-  margin-bottom: 10px;
-  line-height: 1.4;
+  margin-bottom: 12px;
+  line-height: 1.5;
+  color: #111;
 }
 
+/* ---------- ВАРИАНТЫ ОТВЕТОВ ---------- */
 .answers {
   display: flex;
   flex-direction: column;
@@ -47,7 +60,7 @@ h1 {
   border-radius: 6px;
   padding: 10px 12px;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.2s ease;
   line-height: 1.4;
   user-select: none;
 }
@@ -62,27 +75,7 @@ h1 {
   border-color: #0070f3;
 }
 
-.correct {
-  background: #d8ffd8 !important;
-  border-color: #44c144 !important;
-}
-
-.wrong {
-  background: #ffe0e0 !important;
-  border-color: #ff6b6b !important;
-}
-
-.explanation {
-  margin-top: 8px;
-  background: #f9f9f9;
-  border-left: 3px solid #0070f3;
-  padding: 6px 10px;
-  border-radius: 4px;
-  font-size: 0.9rem;
-  color: #333;
-}
-
-
+/* ---------- КНОПКА ПРОВЕРКИ ---------- */
 button {
   background: #0070f3;
   color: white;
@@ -93,31 +86,64 @@ button {
   font-size: 1rem;
   display: block;
   width: 100%;
-  margin-top: 10px;
-  transition: 0.2s;
+  margin-top: 15px;
+  transition: background 0.25s;
 }
 
 button:hover {
   background: #0059c9;
 }
 
+/* ---------- РЕЗУЛЬТАТ ---------- */
 #result {
   margin-top: 25px;
   font-weight: 600;
   text-align: center;
+  font-size: 1.1rem;
 }
 
+/* ---------- ПОДСВЕТКА ---------- */
+.correct {
+  background: #d8ffd8 !important;
+  border-color: #44c144 !important;
+}
 
+.wrong {
+  background: #ffe0e0 !important;
+  border-color: #ff6b6b !important;
+}
+
+/* ---------- ОБЪЯСНЕНИЕ ---------- */
+.explanation {
+  margin-top: 8px;
+  background: #f9f9f9;
+  border-left: 3px solid #0070f3;
+  padding: 6px 10px;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  color: #333;
+}
+
+/* ---------- МОБИЛЬНАЯ АДАПТАЦИЯ ---------- */
 @media (max-width: 600px) {
   .container {
-    padding: 15px;
+    padding: 18px;
   }
+
+  h1 {
+    font-size: 1.2rem;
+  }
+
   .question p {
     font-size: 1rem;
   }
-  label {
+
+  .answers label {
+    font-size: 0.95rem;
+    padding: 9px 10px;
+  }
+
+  button {
     font-size: 0.95rem;
   }
 }
-
-
