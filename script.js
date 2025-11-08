@@ -78,4 +78,5 @@ function handleSelection(e) {
 }
 
 quizContainer.addEventListener('click', handleSelection);
-submi
+submitButton.addEventListener('click', showResults);
+buildQuiz();
