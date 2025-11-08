@@ -1,11 +1,7 @@
-const quizContainer = document.getElementById('quiz');
-const submitButton = document.getElementById('submit');
-const resultContainer = document.getElementById('result');
-
-// ⬇⬇⬇ ДОБАВЬТЕ ЭТОТ КОД ДЛЯ ТАЙМЕРА ⬇⬇⬇
+// ⬇⬇⬇ КОД ТАЙМЕРА ⬇⬇⬇
 class CountdownTimer {
     constructor() {
-        this.targetDate = new Date('2024-12-06T13:45:00').getTime();
+        this.targetDate = new Date('December 06, 2024 13:45:00').getTime();
         this.timerInterval = null;
         this.init();
     }
@@ -41,10 +37,15 @@ class CountdownTimer {
     }
 
     updateDisplay(days, hours, minutes, seconds) {
-        document.getElementById('days').textContent = this.formatTime(days);
-        document.getElementById('hours').textContent = this.formatTime(hours);
-        document.getElementById('minutes').textContent = this.formatTime(minutes);
-        document.getElementById('seconds').textContent = this.formatTime(seconds);
+        const daysElement = document.getElementById('days');
+        const hoursElement = document.getElementById('hours');
+        const minutesElement = document.getElementById('minutes');
+        const secondsElement = document.getElementById('seconds');
+        
+        if (daysElement) daysElement.textContent = this.formatTime(days);
+        if (hoursElement) hoursElement.textContent = this.formatTime(hours);
+        if (minutesElement) minutesElement.textContent = this.formatTime(minutes);
+        if (secondsElement) secondsElement.textContent = this.formatTime(seconds);
     }
 
     formatTime(time) {
@@ -52,11 +53,14 @@ class CountdownTimer {
     }
 
     handleTimerExpired() {
-        document.getElementById('timer').innerHTML = `
-            <div class="timer-expired">
-                Тест начался! Удачи!
-            </div>
-        `;
+        const timerElement = document.getElementById('timer');
+        if (timerElement) {
+            timerElement.innerHTML = `
+                <div class="timer-expired">
+                    Тест начался! Удачи!
+                </div>
+            `;
+        }
         clearInterval(this.timerInterval);
     }
 }
@@ -67,90 +71,86 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 // ⬆⬆⬆ КОНЕЦ КОДА ТАЙМЕРА ⬆⬆⬆
 
-// Ваш существующий код для теста продолжается здесь...
-// Например:
-// class Quiz { ... }
-// или другие функции вашего теста
+// Ваш существующий код для теста
+const quizContainer = document.getElementById('quiz');
+const submitButton = document.getElementById('submit');
+const resultContainer = document.getElementById('result');
 
 /* Построение теста на странице */
 function buildQuiz() {
-  const output = questions.map((q, i) => {
-    const answers = q.options.map(
-      (opt, j) =>
-        `<label data-q="${i}" data-index="${j}">
-          <span class="option-text">${opt}</span>
-        </label>`
-    ).join('');
+    const output = questions.map((q, i) => {
+        const answers = q.options.map(
+            (opt, j) =>
+                `<label data-q="${i}" data-index="${j}">
+                    <span class="option-text">${opt}</span>
+                </label>`
+        ).join('');
 
-    return `
-      <div class="question" data-index="${i}">
-        <p>${q.text}</p>
-        <div class="answers">${answers}</div>
-        <div class="explanation" style="display:none;"></div>
-      </div>`;
-  });
+        return `
+        <div class="question" data-index="${i}">
+            <p>${q.text}</p>
+            <div class="answers">${answers}</div>
+            <div class="explanation" style="display:none;"></div>
+        </div>`;
+    });
 
-  quizContainer.innerHTML = output.join('');
+    quizContainer.innerHTML = output.join('');
 }
 
 /* Обработка выбора варианта */
 quizContainer.addEventListener('click', e => {
-  const label = e.target.closest('label');
-  if (!label) return;
+    const label = e.target.closest('label');
+    if (!label) return;
+    const qIndex = label.dataset.q;
+    const allOptions = quizContainer.querySelectorAll(`label[data-q="${qIndex}"]`);
 
-  const qIndex = label.dataset.q;
-  const allOptions = quizContainer.querySelectorAll(`label[data-q="${qIndex}"]`);
+    // если тот же вариант выбран повторно --- снять выбор
+    if (label.classList.contains('selected')) {
+        label.classList.remove('selected');
+        label.dataset.selected = "false";
+        return;
+    }
 
-  // если тот же вариант выбран повторно — снять выбор
-  if (label.classList.contains('selected')) {
-    label.classList.remove('selected');
-    label.dataset.selected = "false";
-    return;
-  }
-
-  // сбрасываем выбор для всех, выбираем текущий
-  allOptions.forEach(opt => opt.classList.remove('selected'));
-  label.classList.add('selected');
-  label.dataset.selected = "true";
+    // сбрасываем выбор для всех, выбираем текущий
+    allOptions.forEach(opt => opt.classList.remove('selected'));
+    label.classList.add('selected');
+    label.dataset.selected = "true";
 });
 
 /* Проверка и отображение результатов */
 submitButton.addEventListener('click', () => {
-  const questionBlocks = quizContainer.querySelectorAll('.question');
-  let correctCount = 0;
+    const questionBlocks = quizContainer.querySelectorAll('.question');
+    let correctCount = 0;
+    questionBlocks.forEach((block, i) => {
+        const selected = block.querySelector('label.selected');
+        const labels = block.querySelectorAll('label');
+        const explanationBox = block.querySelector('.explanation');
 
-  questionBlocks.forEach((block, i) => {
-    const selected = block.querySelector('label.selected');
-    const labels = block.querySelectorAll('label');
-    const explanationBox = block.querySelector('.explanation');
+        // очищаем прошлую подсветку
+        labels.forEach(l => l.classList.remove('correct', 'wrong'));
+        explanationBox.style.display = 'none';
+        explanationBox.innerHTML = '';
 
-    // очищаем прошлую подсветку
-    labels.forEach(l => l.classList.remove('correct', 'wrong'));
-    explanationBox.style.display = 'none';
-    explanationBox.innerHTML = '';
+        if (!selected) return; // пропуск, если не выбран ответ
 
-    if (!selected) return; // пропуск, если не выбран ответ
+        const chosenIndex = parseInt(selected.dataset.index);
+        const correctIndex = questions[i].correct;
 
-    const chosenIndex = parseInt(selected.dataset.index);
-    const correctIndex = questions[i].correct;
+        // подсвечиваем правильный ответ
+        labels[correctIndex].classList.add('correct');
 
-    // подсвечиваем правильный ответ
-    labels[correctIndex].classList.add('correct');
+        if (chosenIndex !== correctIndex) {
+            // выбран неверный --- подсветить и показать объяснение
+            selected.classList.add('wrong');
+            explanationBox.innerHTML = `💡 ${questions[i].explanation || "Проверьте материал — правильный ответ отличается."}`;
+            explanationBox.style.display = 'block';
+        } else {
+            correctCount++;
+        }
+    });
 
-    if (chosenIndex !== correctIndex) {
-      // выбран неверный — подсветить и показать объяснение
-      selected.classList.add('wrong');
-      explanationBox.innerHTML = `💡 ${questions[i].explanation || "Проверьте материал — правильный ответ отличается."}`;
-      explanationBox.style.display = 'block';
-    } else {
-      correctCount++;
-    }
-  });
-
-  resultContainer.innerHTML = `✅ Правильных ответов: ${correctCount} из ${questions.length}`;
+    resultContainer.innerHTML = `✅ Правильных ответов: ${correctCount} из ${questions.length}`;
 });
-
-
 
 /* Инициализация */
 buildQuiz();
