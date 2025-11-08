@@ -1,43 +1,112 @@
 body {
-  font-family: sans-serif;
-  background: #f9f9f9;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background: #f7f7f7;
   color: #222;
   display: flex;
   justify-content: center;
-  padding: 40px;
+  padding: 20px;
 }
+
 .container {
-  max-width: 700px;
-  background: white;
-  padding: 30px;
-  border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  width: 100%;
+  max-width: 800px;
+  background: #fff;
+  padding: 25px;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
+
 h1 {
-  font-size: 1.4rem;
   text-align: center;
-  margin-bottom: 1.5rem;
+  font-size: 1.3rem;
+  margin-bottom: 25px;
 }
+
 .question {
-  margin-bottom: 20px;
+  margin-bottom: 22px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #eee;
 }
+
+.question p {
+  font-weight: 600;
+  margin-bottom: 10px;
+  line-height: 1.4;
+}
+
+.answers {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
 .answers label {
   display: block;
-  margin-bottom: 5px;
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background: #fafafa;
   cursor: pointer;
+  transition: all 0.2s;
+  line-height: 1.3;
 }
+
+.answers input {
+  display: none;
+}
+
+.answers label:hover {
+  background: #f0f8ff;
+  border-color: #0070f3;
+}
+
+.answers label.selected {
+  background: #e8f1ff;
+  border-color: #0070f3;
+}
+
 button {
   background: #0070f3;
   color: white;
   border: none;
-  padding: 10px 20px;
-  border-radius: 4px;
+  padding: 12px 20px;
+  border-radius: 6px;
   cursor: pointer;
+  font-size: 1rem;
+  display: block;
+  width: 100%;
+  margin-top: 10px;
+  transition: 0.2s;
 }
+
 button:hover {
   background: #0059c9;
 }
+
 #result {
-  margin-top: 20px;
-  font-weight: bold;
+  margin-top: 25px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.correct {
+  background: #d8ffd8 !important;
+  border-color: #44c144 !important;
+}
+
+.wrong {
+  background: #ffe0e0 !important;
+  border-color: #ff6b6b !important;
+}
+
+@media (max-width: 600px) {
+  .container {
+    padding: 15px;
+  }
+  .question p {
+    font-size: 1rem;
+  }
+  label {
+    font-size: 0.95rem;
+  }
 }
