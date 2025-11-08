@@ -6,9 +6,8 @@ function buildQuiz() {
   const output = questions.map((q, i) => {
     const answers = q.options.map(
       (opt, j) =>
-        `<label>
-          <input type="radio" name="question${i}" value="${j}">
-          ${opt}
+        `<label data-q="${i}" data-index="${j}">
+          <span class="option-text">${opt}</span>
         </label>`
     ).join('');
     return `<div class="question" data-index="${i}">
@@ -20,32 +19,51 @@ function buildQuiz() {
   quizContainer.innerHTML = output.join('');
 }
 
-function showResults() {
-  const answerContainers = quizContainer.querySelectorAll('.answers');
+// Клик по вариантам
+quizContainer.addEventListener('click', e => {
+  const label = e.target.closest('label');
+  if (!label) return;
+
+  const qIndex = label.dataset.q;
+  const allOptions = quizContainer.querySelectorAll(`label[data-q="${qIndex}"]`);
+
+  // если клик по уже выбранному — снимаем выбор
+  if (label.classList.contains('selected')) {
+    label.classList.remove('selected');
+    label.dataset.selected = "false";
+    return;
+  }
+
+  // снимаем выбор со всех и ставим новый
+  allOptions.forEach(opt => opt.classList.remove('selected'));
+  label.classList.add('selected');
+  label.dataset.selected = "true";
+});
+
+submitButton.addEventListener('click', () => {
+  const questionBlocks = quizContainer.querySelectorAll('.question');
   let correctCount = 0;
 
-  questions.forEach((q, i) => {
-    const container = answerContainers[i];
-    const selected = container.querySelector('input:checked');
-    const labels = container.querySelectorAll('label');
-    const explanationBox = container.parentElement.querySelector('.explanation');
+  questionBlocks.forEach((block, i) => {
+    const selected = block.querySelector('label.selected');
+    const labels = block.querySelectorAll('label');
+    const explanationBox = block.querySelector('.explanation');
 
-    // очистка прошлой подсветки
-    labels.forEach(l => l.classList.remove('correct', 'wrong', 'selected'));
+    labels.forEach(l => l.classList.remove('correct', 'wrong'));
     explanationBox.style.display = 'none';
-    explanationBox.innerHTML = "";
+    explanationBox.innerHTML = '';
 
-    if (!selected) return; // пропускаем если не выбрано
+    if (!selected) return;
 
-    const selectedValue = parseInt(selected.value);
-    const correctIndex = q.correct;
+    const chosenIndex = parseInt(selected.dataset.index);
+    const correctIndex = questions[i].correct;
 
-    // подсветка правильного ответа
+    // подсвечиваем правильный ответ
     labels[correctIndex].classList.add('correct');
 
-    if (selectedValue !== correctIndex) {
-      selected.parentElement.classList.add('wrong');
-      explanationBox.innerHTML = `💡 ${q.explanation || "Проверьте материал — правильный ответ отличается."}`;
+    if (chosenIndex !== correctIndex) {
+      selected.classList.add('wrong');
+      explanationBox.innerHTML = `💡 ${questions[i].explanation || "Проверьте материал — правильный ответ отличается."}`;
       explanationBox.style.display = 'block';
     } else {
       correctCount++;
@@ -53,30 +71,4 @@ function showResults() {
   });
 
   resultContainer.innerHTML = `✅ Правильных ответов: ${correctCount} из ${questions.length}`;
-}
-
-function handleSelection(e) {
-  if (e.target.tagName !== 'INPUT') return;
-  const group = e.target.name;
-  const current = e.target;
-
-  // Если уже был выбран и кликнули снова — снимаем выбор
-  if (current.dataset.selected === "true") {
-    current.checked = false;
-    current.dataset.selected = "false";
-  } else {
-    // сброс для остальных
-    const radios = document.querySelectorAll(`input[name="${group}"]`);
-    radios.forEach(r => (r.dataset.selected = "false"));
-    current.dataset.selected = "true";
-  }
-
-  // визуальная подсветка выбранного
-  const labels = document.querySelectorAll(`input[name="${group}"] + *`);
-  labels.forEach(l => l.parentElement.classList.remove('selected'));
-  if (current.checked) current.parentElement.classList.add('selected');
-}
-
-quizContainer.addEventListener('click', handleSelection);
-submitButton.addEventListener('click', showResults);
-buildQuiz();
+});
