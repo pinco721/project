@@ -11,9 +11,10 @@ function buildQuiz() {
           ${opt}
         </label>`
     ).join('');
-    return `<div class="question">
+    return `<div class="question" data-index="${i}">
               <p>${q.text}</p>
               <div class="answers">${answers}</div>
+              <div class="explanation" style="display:none;"></div>
             </div>`;
   });
   quizContainer.innerHTML = output.join('');
@@ -26,23 +27,26 @@ function showResults() {
   questions.forEach((q, i) => {
     const container = answerContainers[i];
     const selected = container.querySelector('input:checked');
-
     const labels = container.querySelectorAll('label');
-    labels.forEach(label => {
-      label.classList.remove('correct', 'wrong', 'selected');
-    });
+    const explanationBox = container.parentElement.querySelector('.explanation');
 
-    if (!selected) return;
+    // очистка прошлой подсветки
+    labels.forEach(l => l.classList.remove('correct', 'wrong', 'selected'));
+    explanationBox.style.display = 'none';
+    explanationBox.innerHTML = "";
+
+    if (!selected) return; // пропускаем если не выбрано
 
     const selectedValue = parseInt(selected.value);
     const correctIndex = q.correct;
 
-    // Подсветить правильный ответ
+    // подсветка правильного ответа
     labels[correctIndex].classList.add('correct');
 
-    // Если ответ неверный — подсветить выбранный красным
     if (selectedValue !== correctIndex) {
       selected.parentElement.classList.add('wrong');
+      explanationBox.innerHTML = `💡 ${q.explanation || "Проверьте материал — правильный ответ отличается."}`;
+      explanationBox.style.display = 'block';
     } else {
       correctCount++;
     }
@@ -54,11 +58,24 @@ function showResults() {
 function handleSelection(e) {
   if (e.target.tagName !== 'INPUT') return;
   const group = e.target.name;
-  const labels = document.querySelectorAll(`input[name=${group}] + *`);
+  const current = e.target;
+
+  // Если уже был выбран и кликнули снова — снимаем выбор
+  if (current.dataset.selected === "true") {
+    current.checked = false;
+    current.dataset.selected = "false";
+  } else {
+    // сброс для остальных
+    const radios = document.querySelectorAll(`input[name="${group}"]`);
+    radios.forEach(r => (r.dataset.selected = "false"));
+    current.dataset.selected = "true";
+  }
+
+  // визуальная подсветка выбранного
+  const labels = document.querySelectorAll(`input[name="${group}"] + *`);
   labels.forEach(l => l.parentElement.classList.remove('selected'));
-  e.target.parentElement.classList.add('selected');
+  if (current.checked) current.parentElement.classList.add('selected');
 }
 
-quizContainer.addEventListener('change', handleSelection);
-buildQuiz();
-submitButton.addEventListener('click', showResults);
+quizContainer.addEventListener('click', handleSelection);
+submi
