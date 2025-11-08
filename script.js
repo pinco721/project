@@ -2,6 +2,76 @@ const quizContainer = document.getElementById('quiz');
 const submitButton = document.getElementById('submit');
 const resultContainer = document.getElementById('result');
 
+// ⬇⬇⬇ ДОБАВЬТЕ ЭТОТ КОД ДЛЯ ТАЙМЕРА ⬇⬇⬇
+class CountdownTimer {
+    constructor() {
+        this.targetDate = new Date('2024-12-06T13:45:00').getTime();
+        this.timerInterval = null;
+        this.init();
+    }
+
+    init() {
+        this.startTimer();
+    }
+
+    startTimer() {
+        const updateTimer = () => {
+            const now = new Date().getTime();
+            const distance = this.targetDate - now;
+
+            // Если время вышло
+            if (distance < 0) {
+                this.handleTimerExpired();
+                return;
+            }
+
+            // Расчет дней, часов, минут и секунд
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            // Обновление отображения
+            this.updateDisplay(days, hours, minutes, seconds);
+        };
+
+        // Запускаем сразу и затем каждую секунду
+        updateTimer();
+        this.timerInterval = setInterval(updateTimer, 1000);
+    }
+
+    updateDisplay(days, hours, minutes, seconds) {
+        document.getElementById('days').textContent = this.formatTime(days);
+        document.getElementById('hours').textContent = this.formatTime(hours);
+        document.getElementById('minutes').textContent = this.formatTime(minutes);
+        document.getElementById('seconds').textContent = this.formatTime(seconds);
+    }
+
+    formatTime(time) {
+        return time < 10 ? `0${time}` : time;
+    }
+
+    handleTimerExpired() {
+        document.getElementById('timer').innerHTML = `
+            <div class="timer-expired">
+                Тест начался! Удачи!
+            </div>
+        `;
+        clearInterval(this.timerInterval);
+    }
+}
+
+// Запуск таймера когда страница загрузится
+document.addEventListener('DOMContentLoaded', () => {
+    new CountdownTimer();
+});
+// ⬆⬆⬆ КОНЕЦ КОДА ТАЙМЕРА ⬆⬆⬆
+
+// Ваш существующий код для теста продолжается здесь...
+// Например:
+// class Quiz { ... }
+// или другие функции вашего теста
+
 /* Построение теста на странице */
 function buildQuiz() {
   const output = questions.map((q, i) => {
@@ -79,6 +149,8 @@ submitButton.addEventListener('click', () => {
 
   resultContainer.innerHTML = `✅ Правильных ответов: ${correctCount} из ${questions.length}`;
 });
+
+
 
 /* Инициализация */
 buildQuiz();
