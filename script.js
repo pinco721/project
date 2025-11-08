@@ -24,19 +24,41 @@ function showResults() {
   let correctCount = 0;
 
   questions.forEach((q, i) => {
-    const selector = `input[name=question${i}]:checked`;
-    const userAnswer = (answerContainers[i].querySelector(selector) || {}).value;
+    const container = answerContainers[i];
+    const selected = container.querySelector('input:checked');
 
-    if (parseInt(userAnswer) === q.correct) {
-      correctCount++;
-      answerContainers[i].style.color = 'green';
+    const labels = container.querySelectorAll('label');
+    labels.forEach(label => {
+      label.classList.remove('correct', 'wrong', 'selected');
+    });
+
+    if (!selected) return;
+
+    const selectedValue = parseInt(selected.value);
+    const correctIndex = q.correct;
+
+    // Подсветить правильный ответ
+    labels[correctIndex].classList.add('correct');
+
+    // Если ответ неверный — подсветить выбранный красным
+    if (selectedValue !== correctIndex) {
+      selected.parentElement.classList.add('wrong');
     } else {
-      answerContainers[i].style.color = 'red';
+      correctCount++;
     }
   });
 
-  resultContainer.innerHTML = `Вы ответили правильно на ${correctCount} из ${questions.length}`;
+  resultContainer.innerHTML = `✅ Правильных ответов: ${correctCount} из ${questions.length}`;
 }
 
+function handleSelection(e) {
+  if (e.target.tagName !== 'INPUT') return;
+  const group = e.target.name;
+  const labels = document.querySelectorAll(`input[name=${group}] + *`);
+  labels.forEach(l => l.parentElement.classList.remove('selected'));
+  e.target.parentElement.classList.add('selected');
+}
+
+quizContainer.addEventListener('change', handleSelection);
 buildQuiz();
 submitButton.addEventListener('click', showResults);
