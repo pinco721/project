@@ -124,6 +124,61 @@ button:hover {
   color: #333;
 }
 
+/* ⬇⬇⬇ ДОБАВЬТЕ ЭТИ СТИЛИ ДЛЯ ТАЙМЕРА ⬇⬇⬇ */
+.timer-section {
+    text-align: center;
+    margin: 20px 0;
+    padding: 15px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 10px;
+    color: white;
+}
+
+.timer-section h3 {
+    margin-bottom: 15px;
+    font-size: 1.2em;
+}
+
+.timer {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.timer-item {
+    text-align: center;
+    background: rgba(255, 255, 255, 0.2);
+    padding: 15px 10px;
+    border-radius: 8px;
+    min-width: 70px;
+    backdrop-filter: blur(10px);
+}
+
+.timer-number {
+    font-size: 2em;
+    font-weight: bold;
+    display: block;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+}
+
+.timer-label {
+    font-size: 0.8em;
+    opacity: 0.9;
+    margin-top: 5px;
+    display: block;
+}
+
+.timer-expired {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: #ff6b6b;
+    padding: 20px;
+}
+
+/* Адаптивность для мобильных устройств */
+/* ⬆⬆⬆ КОНЕЦ СТИЛЕЙ ДЛЯ ТАЙМЕРА ⬆⬆⬆ */
+
 /* ---------- МОБИЛЬНАЯ АДАПТАЦИЯ ---------- */
 @media (max-width: 600px) {
   .container {
@@ -146,4 +201,22 @@ button:hover {
   button {
     font-size: 0.95rem;
   }
+      .timer {
+        gap: 8px;
+    }
+    
+    .timer-item {
+        min-width: 60px;
+        padding: 10px 5px;
+    }
+    
+    .timer-number {
+        font-size: 1.5em;
+    }
+    
+    .timer-label {
+        font-size: 0.7em;
+    }
 }
+
+
