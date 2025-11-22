@@ -53,7 +53,7 @@ class CountdownTimer {
 /* === Запуск таймера === */
 // ❗ Укажи дату и время начала теста здесь:
 document.addEventListener('DOMContentLoaded', () => {
-  new CountdownTimer('2025-12-20T14:00:00'); // формат: YYYY-MM-DDTHH:MM:SS
+  new CountdownTimer('2025-12-06T14:00:00'); // формат: YYYY-MM-DDTHH:MM:SS
 });
 
 /* === ТЕСТ === */
