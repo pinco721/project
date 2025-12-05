@@ -5,6 +5,11 @@
 
 body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background-image: url('photo_2025-12-04_23-15-05.jpg');
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-attachment: fixed;
+  background-position: top center;
   background: #f5f7fa;
   color: #222;
   display: flex;
