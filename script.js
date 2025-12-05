@@ -47,7 +47,7 @@ class CountdownTimer {
   }
 
   showStarted() {
-    this.timerEl.innerHTML = `<div class="timer-expired">Тест начался! Удачи!</div>`;
+    this.timerEl.innerHTML = `<div class="timer-expired">Тест начался! Удачи Гандоны! Я вас люблю!</div>`;
   }
 }
 
