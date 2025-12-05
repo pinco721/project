@@ -1,3 +1,4 @@
+/* script.js */
 const quizContainer = document.getElementById('quiz');
 const submitButton = document.getElementById('submit');
 const resultContainer = document.getElementById('result');
@@ -51,9 +52,8 @@ class CountdownTimer {
 }
 
 /* === Запуск таймера === */
-// ❗ Укажи дату и время начала теста здесь:
 document.addEventListener('DOMContentLoaded', () => {
-  new CountdownTimer('2025-12-06T14:00:00'); // формат: YYYY-MM-DDTHH:MM:SS
+  new CountdownTimer('2025-12-06T14:00:00'); 
 });
 
 /* === ТЕСТ === */
@@ -79,21 +79,14 @@ function buildQuiz() {
   quizContainer.innerHTML = output.join('');
 }
 
-/* Выбор варианта */
+/* Выбор варианта (МНОЖЕСТВЕННЫЙ ВЫБОР) */
 quizContainer.addEventListener('click', (e) => {
   const label = e.target.closest('label');
   if (!label) return;
 
-  const qIndex = label.dataset.q;
-  const allOptions = quizContainer.querySelectorAll(`label[data-q="${qIndex}"]`);
-
-  if (label.classList.contains('selected')) {
-    label.classList.remove('selected');
-    return;
-  }
-
-  allOptions.forEach((opt) => opt.classList.remove('selected'));
-  label.classList.add('selected');
+  // Просто переключаем класс 'selected' для множественного выбора.
+  // Мы больше не удаляем класс у соседей.
+  label.classList.toggle('selected');
 });
 
 /* Проверка ответов */
@@ -102,31 +95,54 @@ submitButton.addEventListener('click', () => {
   let correctCount = 0;
 
   questionBlocks.forEach((block, i) => {
-    const selected = block.querySelector('label.selected');
-    const labels = block.querySelectorAll('label');
+    // Находим все выбранные пользователем плашки
+    const selectedLabels = block.querySelectorAll('label.selected');
+    const allLabels = block.querySelectorAll('label');
     const explanationBox = block.querySelector('.explanation');
 
-    labels.forEach((l) => l.classList.remove('correct', 'wrong'));
+    // Сбрасываем старую подсветку
+    allLabels.forEach((l) => l.classList.remove('correct', 'wrong'));
     explanationBox.style.display = 'none';
     explanationBox.innerHTML = '';
 
-    if (!selected) return;
+    // Получаем индексы, которые выбрал пользователь
+    const userSelectedIndices = Array.from(selectedLabels).map(l => parseInt(l.dataset.index));
+    // Получаем правильные индексы из questions.js
+    const correctIndices = questions[i].correct; // Теперь это массив, например [0, 2]
 
-    const chosenIndex = parseInt(selected.dataset.index);
-    const correctIndex = questions[i].correct;
+    // 1. Подсвечиваем ВСЕ правильные ответы зеленым (даже если пользователь их не выбрал, чтобы он знал правду)
+    correctIndices.forEach(index => {
+        allLabels[index].classList.add('correct');
+    });
 
-    labels[correctIndex].classList.add('correct');
+    // 2. Логика проверки
+    // Правильно, если: 
+    // а) количество выбранных совпадает с количеством правильных
+    // б) все выбранные индексы присутствуют в массиве правильных
+    const isCorrect = 
+        userSelectedIndices.length === correctIndices.length &&
+        userSelectedIndices.every(val => correctIndices.includes(val));
 
-    if (chosenIndex !== correctIndex) {
-      selected.classList.add('wrong');
-      explanationBox.innerHTML = `💡 ${questions[i].explanation || "Проверьте материал — правильный ответ отличается."}`;
-      explanationBox.style.display = 'block';
-    } else {
+    if (isCorrect) {
       correctCount++;
+    } else {
+      // Если ответ неверный:
+      // Подсвечиваем красным те, что пользователь выбрал, но которых НЕТ в правильных
+      userSelectedIndices.forEach(index => {
+          if (!correctIndices.includes(index)) {
+              allLabels[index].classList.add('wrong');
+          }
+      });
+      
+      // Показываем объяснение
+      explanationBox.innerHTML = `💡 ${questions[i].explanation || "Ответ неверен или неполон."}`;
+      explanationBox.style.display = 'block';
     }
   });
 
   resultContainer.innerHTML = `✅ Правильных ответов: ${correctCount} из ${questions.length}`;
+  // Прокручиваем к результату
+  resultContainer.scrollIntoView({ behavior: 'smooth' });
 });
 
 /* Инициализация теста */
